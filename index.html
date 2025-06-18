@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cannabis Shop - Colecciones Exclusivas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --color-primary: #8b5cf6;
+            --color-primary-dark: #7c3aed;
+            --color-bg: #111827;
+            --color-card: rgba(31, 41, 55, 0.75);
+            --color-card-hover: rgba(31, 41, 55, 0.9);
+            --color-border: rgba(55, 65, 81, 0.8);
+            --color-text: #f9fafb;
+            --matrix-green: #00ff00;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-bg);
+            background-image: url('https://raw.githubusercontent.com/cannabisshop/Presentaci-n/main/fotodelgrupo.jpeg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: var(--color-text);
+        }
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .product-card {
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: card-fade-in 0.5s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-card::before {
+             content: '';
+             position: absolute;
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             border: 2px solid transparent;
+             border-radius: 0.5rem;
+             transition: border-color 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4), 0 0 20px var(--color-primary-dark);
+            background-color: var(--color-card-hover);
+        }
+        .product-card:hover::before {
+            border-color: var(--color-primary);
+        }
+        .btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 0 rgba(0,0,0,0);
+        }
+        .btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--color-primary-dark);
+            box-shadow: 0 0 15px var(--color-primary);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+         .btn-secondary:hover:not(:disabled) {
+            background-color: var(--color-primary);
+            color: white;
+            box-shadow: 0 0 15px var(--color-primary);
+        }
+        .tag {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        #cart-sidebar {
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background-color: rgba(17, 24, 39, 0.9);
+        }
+        .category-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .category-section.active {
+            display: block;
+            opacity: 1;
+        }
+        #category-menu {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            pointer-events: none;
+        }
+        #category-menu.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .hero-title {
+            animation: text-focus-in 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+        }
+        /* Modal Styles */
+        #modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        #details-modal-container {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* Logo Button Styles */
+        #logo-link {
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        #logo-link:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 12px var(--matrix-green));
+        }
+
+        /* Animaciones */
+        @keyframes card-fade-in {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes text-focus-in {
+            0% { filter: blur(12px); opacity: 0; }
+            100% { filter: blur(0px); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="py-4 shadow-md sticky top-0 z-20 backdrop-blur-md" style="background-color: rgba(17, 24, 39, 0.8);">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" id="logo-link" class="flex items-center gap-3">
+                <i class="fas fa-cannabis text-3xl text-emerald-400"></i>
+                <span class="text-2xl font-bold text-white">Verde Esencia</span>
+            </a>
+            <div id="cart-icon" class="relative cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                <span id="cart-counter" class="absolute -top-2 -right-2 text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold" style="background-color: var(--color-primary); color: white;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero / Category Selector -->
+    <section id="hero" class="container mx-auto px-4 py-20 text-center">
+        <h2 class="text-5xl md:text-6xl font-bold hero-title mb-4">Colecciones Exclusivas</h2>
+        <p class="text-xl opacity-80 mb-8">Descubre nuestras selecciones curadas para ti.</p>
+        <div class="relative inline-block">
+            <button id="category-button" class="btn btn-primary font-bold py-3 px-8 rounded-lg text-lg">Explorar Categorías</button>
+            <div id="category-menu" class="absolute left-1/2 -translate-x-1/2 mt-2 w-64 rounded-md shadow-lg backdrop-blur-md" style="background-color: var(--color-card);">
+                <div id="category-links" class="py-1 rounded-md" role="menu" aria-orientation="vertical"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section id="featured-products" class="container mx-auto px-4 py-16">
+        <h3 class="text-3xl font-bold mb-8 text-center" style="color: var(--color-primary);">Productos Destacados</h3>
+        <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+    </section>
+
+    <!-- Categories Container -->
+    <main id="category-container" class="container mx-auto px-4 pt-4 pb-12"></main>
+    
+    <!-- Philosophy Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 text-center max-w-3xl">
+             <div class="p-8 rounded-lg backdrop-blur-md" style="background-color: var(--color-card);">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--color-primary);">Nuestra Filosofía</h2>
+                <p class="text-lg opacity-80 leading-relaxed">
+                    En Verde Esencia, creemos en el poder del cannabis para mejorar el bienestar. Nacimos de la pasión por la planta y el deseo de crear un espacio seguro, educativo y acogedor para nuestra comunidad.
+                    <br><br>
+                    Nuestro equipo está formado por expertos conocedores que te guiarán para encontrar el producto perfecto para tus necesidades. Nos comprometemos con la calidad, la transparencia y la educación del consumidor.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Sidebar -->
+    <aside id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-sm transform translate-x-full z-50 p-6 flex flex-col backdrop-blur-md"></aside>
+    
+    <!-- Details Modal -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden opacity-0"></div>
+    <div id="details-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div id="details-modal-container" class="relative w-full max-w-lg mx-auto rounded-lg shadow-lg backdrop-blur-md p-8 opacity-0 scale-95" style="background-color: var(--color-card);">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-2xl leading-none">&times;</button>
+            <div id="modal-content" class="text-center"></div>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="mt-12 py-6 backdrop-blur-md" style="background-color: rgba(17, 24, 39, 0.8);">
+        <div class="container mx-auto text-center opacity-70 px-4"><p>&copy; 2025 Cannabis Shop. Todos los derechos reservados. By Juan M Barrientos</p></div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- STATE & CONFIG ---
+        let cart = [];
+
+        const productImages = [
+            'https://hashkiekush.com.ar/assets/images/gallery01/1f92e9a5_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery01/5e73e93a_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery01/6a03c3b5_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery01/7e15d852_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery01/a3e1d137_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery01/aa4cb23f_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery01/f9e80277_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/219bd3cb_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/53a557b3_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/640192e2_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/766f54ba_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/77607a7d_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/8a5940c6_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/c4f2e96d_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery02/d5830b91_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/107f9175_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/30f288f6_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/40b3997f_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/52f68285_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/92bf88e7_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/93855018_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/a05d8f6d_original.jpg', 'https://hashkiekush.com.ar/assets/images/gallery03/be7e2213_original.jpg'
+        ];
+
+        const getRandomImage = () => productImages[Math.floor(Math.random() * productImages.length)];
+        
+        const productsData = [
+            { name: "Sour Diesel", type: "Sativa", thc: 19, cbd: 1, price: 58, img: getRandomImage() }, { name: "Jack Herer", type: "Sativa", thc: 18, cbd: 1, price: 60, img: getRandomImage() }, { name: "Green Crack", type: "Sativa", thc: 17, cbd: 1, price: 55, img: getRandomImage() }, { name: "Durban Poison", type: "Sativa", thc: 24, cbd: 1, price: 65, img: getRandomImage() }, { name: "Strawberry Cough", type: "Sativa", thc: 15, cbd: 1, price: 52, img: getRandomImage() }, { name: "Acapulco Gold", type: "Sativa", thc: 18, cbd: 1, price: 68, img: getRandomImage() }, { name: "Granddaddy Purple", type: "Indica", thc: 17, cbd: 1, price: 50, img: getRandomImage() }, { name: "Northern Lights", type: "Indica", thc: 16, cbd: 2, price: 54, img: getRandomImage() }, { name: "Bubba Kush", type: "Indica", thc: 17, cbd: 1, price: 56, img: getRandomImage() }, { name: "Zkittlez", type: "Indica", thc: 15, cbd: 1, price: 60, img: getRandomImage() }, { name: "Do-Si-Dos", type: "Indica", thc: 30, cbd: 1, price: 75, img: getRandomImage() }, { name: "Hindu Kush", type: "Indica", thc: 18, cbd: 1, price: 53, img: getRandomImage() }, { name: "Blue Dream", type: "Híbrido", thc: 18, cbd: 2, price: 55, img: getRandomImage() }, { name: "OG Kush", type: "Híbrido", thc: 19, cbd: 1, price: 57, img: getRandomImage() }, { name: "White Widow", type: "Híbrido", thc: 15, cbd: 1, price: 50, img: getRandomImage() }, { name: "GSC", type: "Híbrido", thc: 19, cbd: 1, price: 62, img: getRandomImage() }, { name: "Pineapple Express", type: "Híbrido", thc: 20, cbd: 1, price: 64, img: getRandomImage() }, { name: "AK-47", type: "Híbrido", thc: 20, cbd: 2, price: 59, img: getRandomImage() }, { name: "Gelato", type: "Híbrido", thc: 17, cbd: 1, price: 70, img: getRandomImage() }, { name: "Wedding Cake", type: "Híbrido", thc: 25, cbd: 1, price: 72, img: getRandomImage() }, { name: "Runtz", type: "Híbrido", thc: 29, cbd: 1, price: 80, img: getRandomImage() }, { name: "GG4", type: "Híbrido", thc: 20, cbd: 1, price: 66, img: getRandomImage() },
+        ];
+        let categorizedProducts = {};
+
+        // --- DOM ELEMENTS ---
+        const featuredGrid = document.getElementById('featured-grid');
+        const categoryContainer = document.getElementById('category-container');
+        const categoryButton = document.getElementById('category-button');
+        const categoryMenu = document.getElementById('category-menu');
+        const categoryLinks = document.getElementById('category-links');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const detailsModal = document.getElementById('details-modal');
+        const modalContainer = document.getElementById('details-modal-container');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const modalContent = document.getElementById('modal-content');
+        
+        // --- CATEGORY & FEATURED SETUP ---
+        function setupCategories() {
+            const categoryNames = ["Sativas Energéticas", "Índicas Relajantes", "Híbridos Balanceados"];
+            const shuffledProducts = [...productsData].sort(() => 0.5 - Math.random());
+            const itemsPerCategory = Math.ceil(shuffledProducts.length / categoryNames.length);
+            for (let i = 0; i < categoryNames.length; i++) {
+                const categoryName = categoryNames[i];
+                categorizedProducts[categoryName] = shuffledProducts.splice(0, itemsPerCategory);
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderFeaturedProducts() {
+            const shuffled = [...productsData].sort(() => 0.5 - Math.random());
+            const featured = shuffled.slice(0, 4);
+            featuredGrid.innerHTML = '';
+            featured.forEach((product, index) => {
+                const card = createProductCard(product);
+                card.style.animationDelay = `${index * 100}ms`;
+                featuredGrid.appendChild(card);
+            });
+        }
+
+        function renderCategories() {
+            categoryContainer.innerHTML = '';
+            categoryLinks.innerHTML = '';
+            Object.keys(categorizedProducts).forEach(name => {
+                const section = document.createElement('section');
+                section.id = `category-${name.replace(/\s+/g, '-')}`;
+                section.className = 'category-section';
+                section.innerHTML = `<h3 class="text-3xl font-bold mb-8 text-center" style="color: var(--color-primary);">${name}</h3>
+                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>`;
+                const grid = section.querySelector('.grid');
+                categorizedProducts[name].forEach((product, index) => {
+                    const card = createProductCard(product);
+                    card.style.animationDelay = `${index * 100}ms`;
+                    grid.appendChild(card);
+                });
+                categoryContainer.appendChild(section);
+                const link = document.createElement('a');
+                link.href = `#${section.id}`;
+                link.className = 'block px-4 py-2 text-md text-gray-200 rounded-md hover:bg-gray-700/50 transition-transform duration-200 hover:scale-105';
+                link.textContent = name;
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+                    section.classList.add('active');
+                    toggleCategoryMenu(false);
+                    window.scrollTo({ top: section.offsetTop - 100, behavior: 'smooth' });
+                });
+                categoryLinks.appendChild(link);
+            });
+        }
+        
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'group product-card rounded-lg overflow-hidden shadow-lg p-5 flex flex-col backdrop-blur-md';
+            card.innerHTML = `
+                <img class="w-full h-48 object-cover rounded-md" src="${product.img}" alt="Imagen de ${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/333/fff?text=${product.name.replace(/\s/g,'+')}';">
+                <div class="py-4 flex-grow flex flex-col">
+                    <div class="font-bold text-xl mb-2 flex justify-between items-start">
+                        <span class="pr-2">${product.name}</span>
+                        <span class="tag text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0">${product.type}</span>
+                    </div>
+                    <div class="text-sm opacity-80 space-y-1 flex-grow">
+                        <p><strong>THC:</strong> ~${product.thc}%</p>
+                        <p><strong>CBD:</strong> ~${product.cbd}%</p>
+                    </div>
+                    <div class="pt-4 flex justify-between items-center">
+                        <span class="text-2xl font-bold" style="color: var(--color-primary);">$${product.price}</span>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                             <button class="btn btn-secondary font-bold py-2 px-3 rounded-lg details-btn">Detalle</button>
+                             <button class="btn btn-primary font-bold py-2 px-3 rounded-lg add-to-cart-btn">Añadir</button>
+                        </div>
+                    </div>
+                </div>`;
+            const addButton = card.querySelector('.add-to-cart-btn');
+            const detailsButton = card.querySelector('.details-btn');
+            addButton.addEventListener('click', (e) => { e.stopPropagation(); addToCart(product, addButton); });
+            detailsButton.addEventListener('click', (e) => { e.stopPropagation(); showDetailsModal(product); });
+            return card;
+        }
+
+        function renderCart() {
+            const cartCounter = document.getElementById('cart-counter');
+            cartSidebar.innerHTML = `
+                <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">Tu Carrito</h2><button id="close-cart" class="text-2xl">&times;</button></div>
+                <div id="cart-items" class="flex-grow overflow-y-auto pr-2"></div>
+                <div class="border-t mt-6 pt-6" style="border-color: var(--color-border);"><div class="flex justify-between items-center font-bold text-xl"><span>Total</span><span id="cart-total">$0</span></div><button id="checkout-btn" class="btn btn-primary w-full py-3 mt-4 rounded-lg font-bold">Finalizar Compra</button></div>`;
+            
+            const cartItemsContainer = cartSidebar.querySelector('#cart-items');
+            cartItemsContainer.innerHTML = (cart.length === 0) ? `<p class="text-center opacity-50">Tu carrito está vacío.</p>` : '';
+            if (cart.length > 0) {
+                 cart.forEach(item => {
+                    const cartItemEl = document.createElement('div');
+                    cartItemEl.className = 'flex items-center justify-between mb-4';
+                    cartItemEl.innerHTML = `<div class="flex items-center gap-4"><img src="${item.img}" alt="${item.name}" class="w-16 h-16 rounded-md object-cover"><div><h4 class="font-semibold">${item.name}</h4><p class="text-sm opacity-70">$${item.price}</p></div></div><div class="flex items-center gap-3"><div class="flex items-center border rounded-md" style="border-color: var(--color-border);"><button class="px-2 change-quantity" data-name="${item.name}" data-change="-1">-</button><span>${item.quantity}</span><button class="px-2 change-quantity" data-name="${item.name}" data-change="1">+</button></div><button class="text-red-500 hover:text-red-400 remove-item" data-name="${item.name}">&times;</button></div>`;
+                    cartItemsContainer.appendChild(cartItemEl);
+                });
+            }
+            updateCartTotal();
+            cartCounter.textContent = cart.length;
+
+            cartSidebar.querySelector('#close-cart').addEventListener('click', closeCart);
+            cartSidebar.querySelector('#cart-items').addEventListener('click', handleCartAction);
+            cartSidebar.querySelector('#checkout-btn').addEventListener('click', handleCheckout);
+        }
+
+        // --- MODAL LOGIC ---
+        function showDetailsModal(product) {
+            modalContent.innerHTML = `
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--color-primary);">${product.name}</h2>
+                <p class="text-lg opacity-80"><strong>Descripción:</strong> Prueba</p>
+            `;
+            detailsModal.classList.remove('hidden');
+            detailsModal.classList.add('flex');
+            updateOverlayVisibility();
+            setTimeout(() => {
+                modalContainer.classList.remove('opacity-0', 'scale-95');
+            }, 10);
+        }
+
+        function closeDetailsModal() {
+            modalContainer.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                 detailsModal.classList.add('hidden');
+                 detailsModal.classList.remove('flex');
+                 updateOverlayVisibility();
+            }, 300);
+        }
+
+        // --- CART LOGIC ---
+        function addToCart(product, buttonElement) {
+            const item = cart.find(i => i.name === product.name);
+            if (item) {
+                item.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            renderCart();
+            
+            if (buttonElement && !buttonElement.disabled) {
+                const originalText = buttonElement.innerHTML;
+                buttonElement.disabled = true;
+                buttonElement.innerHTML = `✓ Añadido`;
+                buttonElement.classList.remove('btn-primary');
+                buttonElement.classList.add('bg-green-500');
+
+                setTimeout(() => {
+                    buttonElement.disabled = false;
+                    buttonElement.innerHTML = originalText;
+                    buttonElement.classList.add('btn-primary');
+                    buttonElement.classList.remove('bg-green-500');
+                }, 2000);
+            }
+        }
+        
+        const handleCartAction = (e) => {
+            const target = e.target;
+            const name = target.dataset.name;
+            if (!name) return;
+            if (target.classList.contains('remove-item')) {
+                cart = cart.filter(i => i.name !== name);
+            }
+            if (target.classList.contains('change-quantity')) {
+                const item = cart.find(i => i.name === name);
+                if (item) {
+                    item.quantity += parseInt(target.dataset.change);
+                    if (item.quantity <= 0) {
+                        cart = cart.filter(i => i.name !== name);
+                    }
+                }
+            }
+            renderCart();
+        };
+
+        function handleCheckout() {
+            if (cart.length === 0) return;
+            
+            const formatPrice = (number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(number);
+
+            let message = "¡Hola Verde Esencia! 👋 Quisiera hacer el siguiente pedido:\n";
+            let total = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                message += `\n*${item.name}*\n`;
+                message += `Cantidad: ${item.quantity} x ${formatPrice(item.price)} = ${formatPrice(itemTotal)}\n`;
+                message += `-------------------------------------\n`;
+                total += itemTotal;
+            });
+
+            message += `\n*TOTAL DEL PEDIDO: ${formatPrice(total)}*\n\n`;
+            message += `*Retiro en: Sucursal San Telmo*\n\n`;
+            message += `¡Quedo a la espera de la confirmación para coordinar el pago y la entrega/retiro!`;
+
+            const phoneNumber = "5491154250259";
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+            window.open(whatsappUrl, '_blank');
+        }
+
+        const updateCartTotal = () => {
+            const cartTotal = cartSidebar.querySelector('#cart-total');
+            if(cartTotal) cartTotal.textContent = `$${cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}`;
+        };
+
+        // --- UI INTERACTION ---
+        function updateOverlayVisibility() {
+            const isCartOpen = !cartSidebar.classList.contains('translate-x-full');
+            const isModalOpen = !detailsModal.classList.contains('hidden');
+            if (isCartOpen || isModalOpen) {
+                modalOverlay.classList.remove('hidden');
+                setTimeout(() => modalOverlay.classList.remove('opacity-0'), 10);
+            } else {
+                modalOverlay.classList.add('opacity-0');
+                setTimeout(() => modalOverlay.classList.add('hidden'), 300);
+            }
+        }
+
+        const openCart = () => {
+            cartSidebar.classList.remove('translate-x-full');
+            updateOverlayVisibility();
+        };
+        const closeCart = () => {
+            cartSidebar.classList.add('translate-x-full');
+            updateOverlayVisibility();
+        };
+        const toggleCategoryMenu = (force) => {
+            const open = typeof force === 'boolean' ? force : !categoryMenu.classList.contains('open');
+            categoryMenu.classList.toggle('open', open);
+        };
+
+        // --- EVENT LISTENERS ---
+        document.getElementById('cart-icon').addEventListener('click', openCart);
+        modalOverlay.addEventListener('click', () => {
+            closeCart();
+            closeDetailsModal();
+        });
+        closeModalBtn.addEventListener('click', closeDetailsModal);
+        categoryButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleCategoryMenu();
+        });
+        document.addEventListener('click', () => toggleCategoryMenu(false));
+
+        // --- INITIALIZATION ---
+        setupCategories();
+        renderFeaturedProducts();
+        renderCategories();
+        renderCart();
+    });
+    </script>
+</body>
+</html>
